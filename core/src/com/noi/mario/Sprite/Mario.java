@@ -1,10 +1,7 @@
 package com.noi.mario.Sprite;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -13,12 +10,9 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.utils.Array;
 import com.noi.mario.MarioGame;
 import com.noi.mario.Screens.PlayScreen;
-
-import sun.jvm.hotspot.opto.MachIfNode;
 
 public class Mario extends Sprite {
     public enum State{FALLING, JUMPING, STANDING, RUNNING};
@@ -32,9 +26,9 @@ public class Mario extends Sprite {
     private float stateTimer;
     private boolean runningRight;
 
-    public Mario(World world, PlayScreen screen){
+    public Mario(PlayScreen screen){
         super(screen.getAtlas().findRegion("little_mario"));
-        this.world = world;
+        this.world = screen.getWorld();
         currentState = State.STANDING;
         previousState = State.STANDING;
         stateTimer = 0;
@@ -114,12 +108,11 @@ public class Mario extends Sprite {
         CircleShape shape = new CircleShape();
         shape.setRadius(6 / MarioGame.PPM);
         fdef.filter.categoryBits = MarioGame.MARIO_BIT;
-        fdef.filter.maskBits = MarioGame.DEFAULT_BIT | MarioGame.COIN_BIT | MarioGame.BRICK_BIT;
-        b2body.createFixture(fdef);
+        fdef.filter.maskBits = MarioGame.GROUND_BIT | MarioGame.COIN_BIT | MarioGame.BRICK_BIT | MarioGame.ENEMY_BIT | MarioGame.OBJECT_BIT |
+        MarioGame.ENEMY_HEAD_BIT;
 
         fdef.shape = shape;
-        b2body.createFixture(fdef).setUserData(this);
-        shape.setPosition(new Vector2(0, -14 / MarioGame.PPM));
+        b2body.createFixture(fdef);
 
         EdgeShape head = new EdgeShape();
         head.set(new Vector2(-2 / MarioGame.PPM, 6 / MarioGame.PPM), new Vector2(2 / MarioGame.PPM, 6 / MarioGame.PPM));
